@@ -8,8 +8,15 @@ public class Main {
     static List<Student> filterStudents(
             List<Student> srcList, Predicate<Student> predicate)
     {
-        return srcList.stream()
-                .filter(s -> predicate.test(s)).collect(Collectors.toList());
+        List<Student> auxList = new ArrayList<>();
+
+        for(Student st: srcList) {
+            if(predicate.test(st)) {
+                auxList.add(st);
+            }
+        }
+
+        return auxList;
     }
 
     public static void main(String[] args)
@@ -45,22 +52,24 @@ public class Main {
                         "Subject3",
                         "Subject4"))));
 
-        List<Student> olderThan20 = filterStudents(students,
-                s -> s.getAge() > 20);
-        List<Student> enrolledInProgramming = filterStudents(students,
-                s -> s.getSubjects().stream()
-                        .anyMatch(sub -> sub.equals("Programming")));
-        List<Student> peters = filterStudents(
-                students, s -> s.getName().contains("Peter"));
-
+        List<Student> olderThan20 = filterStudents(students, st -> st.getAge() >= 20);
         System.out.println("Students that are older than 20:");
-        olderThan20.stream().forEach(s -> System.out.println(s));
+        for(Student s: olderThan20)
+            System.out.println(s);
         System.out.println();
+
+        List<Student> enrolledInProgramming = filterStudents(students,
+                st -> st.getSubjects().contains("Programming"));
         System.out.println(
                 "Students that are inscribed in the \"Programming\" subject");
-        enrolledInProgramming.stream().forEach(s -> System.out.println(s));
+        for(Student s: enrolledInProgramming)
+            System.out.println(s);
         System.out.println();
-        System.out.println("Students whose name contains \"Peter\"");
-        peters.stream().forEach(s -> System.out.println(s));
+
+        List<Student> peters = filterStudents(students,
+                st -> st.getName().contains("Peter"));
+        System.out.println("Students whose name contains \"Peter\":");
+        for(Student s: peters)
+            System.out.println(s);
     }
 }
