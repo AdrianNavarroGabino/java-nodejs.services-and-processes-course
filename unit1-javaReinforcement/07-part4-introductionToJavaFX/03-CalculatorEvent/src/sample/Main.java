@@ -1,3 +1,5 @@
+// Adrián Navarro Gabino
+
 package sample;
 
 import javafx.application.Application;
@@ -11,7 +13,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Calculator Event");
         primaryStage.setScene(new Scene(root, 400, 400));
         primaryStage.show();
     }
