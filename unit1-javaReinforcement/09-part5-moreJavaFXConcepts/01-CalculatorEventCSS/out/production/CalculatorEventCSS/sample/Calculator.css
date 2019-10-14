@@ -1,0 +1,8 @@
+.root{
+    -fx-background-color: black;
+    -fx-font-family: 'Courier New', Courier, monospace;
+}
+
+.label {
+    -fx-text-fill: white;
+}
