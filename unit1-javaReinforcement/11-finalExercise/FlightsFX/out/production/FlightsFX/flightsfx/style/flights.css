@@ -1,0 +1,26 @@
+.root{
+    -fx-background-color: gray;
+}
+
+.label{
+    -fx-text-fill: #FFE;
+    -fx-font-weight: bold;
+}
+
+.button{
+    -fx-background-color: black;
+    -fx-text-fill: #FFE;
+}
+
+.choice-box .label, .table-view .column-header .label{
+    -fx-text-fill: black;
+}
+
+// remove border from the table that appears when it has focus
+.table-view, .table-view:focused {
+  -fx-background-color: transparent,-fx-box-border,-fx-control-inner-background;
+}
+
+.chart-legend{
+    -fx-background-color: sienna;
+}
