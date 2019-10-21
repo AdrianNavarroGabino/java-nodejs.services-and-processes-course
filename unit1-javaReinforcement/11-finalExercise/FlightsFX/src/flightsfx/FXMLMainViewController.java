@@ -1,12 +1,9 @@
-// Adrián Navarro Gabino
-
 package flightsfx;
 
 import flightsfx.model.Flight;
 import flightsfx.utils.FileUtils;
 import flightsfx.utils.MessageUtils;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -15,52 +12,37 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.OptionalDouble;
+import java.time.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * <h1>Main View Controller</h1>
+ * Manages the main view.
+ * @author Adrián Navarro Gabino
+ * @version 1.0
+ */
 public class FXMLMainViewController {
     private static ObservableList<Flight> flights;
 
     @FXML
     private TableView<Flight> flightsTable;
-
     @FXML
-    private TableColumn<Flight, String> flightNumberColumn;
-
-    @FXML
-    private TableColumn<Flight, String> destinationColumn;
-
+    private TableColumn<Flight, String> flightNumberColumn, destinationColumn;
     @FXML
     private TableColumn<Flight, LocalDateTime> departureColumn;
-
     @FXML
     private TableColumn<Flight, LocalTime> durationColumn;
-
     @FXML
     private ChoiceBox<String> choiceFilter;
-
     @FXML
     private Button deleteBtn;
-
     @FXML
-    private Button applyBtn;
+    private TextField flightNumberTxt, destinationTxt, departureTxt, durationTxt;
 
-    @FXML
-    private TextField flightNumberTxt;
-
-    @FXML
-    private TextField destinationTxt;
-
-    @FXML
-    private TextField departureTxt;
-
-    @FXML
-    private TextField durationTxt;
-
+    /**
+     * Initializes the FXML view.
+     */
     public void initialize() {
         deleteBtn.setDisable(true);
         flightsTable.setPlaceholder(new Label("No flights available"));
@@ -77,15 +59,25 @@ public class FXMLMainViewController {
         fillFilterChoice();
     }
 
+    /**
+     * Shows every flight from the flights list in the table.
+     */
     public void showAllFlights()
     {
         flightsTable.setItems(flights);
     }
 
+    /**
+     * Shows all the flights to the city of the currently selected flight in
+     * the table. If no flight is selected, then this choice will cause an error
+     * alert.
+     */
     public void showFlightsCurrentCity()
     {
         if(flightsTable.getSelectionModel().getSelectedIndex() != -1)
         {
+            // Collectors.toList() doesn't admit an ObservableList so I need an
+            // auxiliary variable.
             List<Flight> flightsCurrentCity = flights.stream()
                     .filter(f -> f.getDestination().equalsIgnoreCase(
                             flightsTable.getSelectionModel()
@@ -95,14 +87,21 @@ public class FXMLMainViewController {
             ObservableList<Flight> auxFlights =
                     FXCollections.observableArrayList(flightsCurrentCity);
             flightsTable.setItems(auxFlights);
+            emptyFields();
         }
         else
         {
             MessageUtils.showError("No flight selected");
         }
     }
+
+    /**
+     * Shows all the flights whose duration is longer than 3 hours.
+     */
     public void showLongFlights()
     {
+        // Collectors.toList() doesn't admit an ObservableList so I need an
+        // auxiliary variable.
         List<Flight> longFlights = flights.stream()
                 .filter(f -> f.getDuration()
                         .compareTo(LocalTime.of(3,0,0)) > 0)
@@ -112,11 +111,16 @@ public class FXMLMainViewController {
         flightsTable.setItems(auxFlights);
     }
 
+    /**
+     * Shows only the next 5 flights that will depart from the airport.
+     */
     public void showNextFiveFlights()
     {
-        Comparator<Flight> comparator = (a,b) -> a.getDepartureDate()
-                .compareTo(b.getDepartureDate());
+        Comparator<Flight> comparator =
+                Comparator.comparing(Flight::getDepartureDate);
 
+        // Collectors.toList() doesn't admit an ObservableList so I need an
+        // auxiliary variable.
         List<Flight> longFlights = flights.stream()
                 .filter(f -> f.getDepartureDate()
                         .compareTo(LocalDateTime.now()) > 0)
@@ -128,8 +132,14 @@ public class FXMLMainViewController {
         flightsTable.setItems(auxFlights);
     }
 
+    /**
+     * Calculates the duration average of all the flights, and show the result
+     * in an Alert.
+     */
     public void showFlightDurationAverage()
     {
+        // .average() returns an OptionalDouble, which is a container object
+        // which may or may not contain a double value.
         OptionalDouble averageMinutes = flights.stream()
                 .mapToInt(f ->
                         f.getDuration().getHour() * 60 +
@@ -143,6 +153,9 @@ public class FXMLMainViewController {
         MessageUtils.showMessage("Flight duration average: " + average);
     }
 
+    /**
+     * Fills the filter choice with the filter options.
+     */
     public void fillFilterChoice()
     {
         choiceFilter.setItems(
@@ -154,6 +167,10 @@ public class FXMLMainViewController {
                         "Show flight duration average"));
     }
 
+    /**
+     * Adds a new flight to the list and to the table.
+     * @param actionEvent Action event
+     */
     public void addFlight(ActionEvent actionEvent) {
         if(!flightNumberTxt.getText().equals("") &&
                 !departureTxt.getText().equals("") &&
@@ -169,10 +186,10 @@ public class FXMLMainViewController {
                         LocalTime.parse(
                                 durationTxt.getText(), FileUtils.timeFormatter)));
 
-                flightNumberTxt.setText("");
-                departureTxt.setText("");
-                destinationTxt.setText("");
-                durationTxt.setText("");
+                // If you add a flight with a filter on, you need to reload
+                // the table
+                applyFilter(actionEvent);
+                emptyFields();
             }
             catch (Exception e)
             {
@@ -185,6 +202,10 @@ public class FXMLMainViewController {
         }
     }
 
+    /**
+     * Actives delete button when a flight is selected.
+     * @param mouseEvent Mouse event
+     */
     public void activeDelete(MouseEvent mouseEvent) {
         if(flightsTable.getSelectionModel().getSelectedIndex() != -1)
         {
@@ -198,15 +219,31 @@ public class FXMLMainViewController {
         }
     }
 
+    /**
+     * Deletes a selected flight.
+     * @param actionEvent Action event
+     */
     public void deleteFlight(ActionEvent actionEvent) {
         Flight flight = flightsTable.getSelectionModel().getSelectedItem();
         flights.remove(flight);
+        // If you delete a flight with a filter on, you need to reload
+        // the table
+        applyFilter(actionEvent);
         flightsTable.getSelectionModel().clearSelection();
+        emptyFields();
         deleteBtn.setDisable(true);
     }
 
+    /**
+     * Gets the flights list
+     * @return Flights list
+     */
     public static List<Flight> getFlights() { return flights; }
 
+    /**
+     * Apply the chosen filter by clicking Apply Filter button.
+     * @param actionEvent Action event
+     */
     public void applyFilter(ActionEvent actionEvent) {
         deleteBtn.setDisable(true);
         switch(choiceFilter.getSelectionModel().getSelectedIndex())
@@ -220,6 +257,11 @@ public class FXMLMainViewController {
         flightsTable.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Updates a flight data without having to delete and add it again to the
+     * list.
+     * @param actionEvent Action event
+     */
     public void modify(ActionEvent actionEvent) {
         if(flightsTable.getSelectionModel().getSelectedIndex() != -1){
             if(!flightNumberTxt.getText().equals("") &&
@@ -238,10 +280,7 @@ public class FXMLMainViewController {
                             durationTxt.getText(), FileUtils.timeFormatter));
                     flightsTable.refresh();
 
-                    flightNumberTxt.setText("");
-                    departureTxt.setText("");
-                    destinationTxt.setText("");
-                    durationTxt.setText("");
+                    emptyFields();
                     flightsTable.getSelectionModel().clearSelection();
                     deleteBtn.setDisable(true);
                 }
@@ -258,9 +297,26 @@ public class FXMLMainViewController {
         }
     }
 
+    /**
+     * Changes the view to show a pie chart with the number of flights per
+     * destination.
+     * @param actionEvent Action event
+     * @throws IOException Input/Output Exception
+     */
     public void goToChartView(ActionEvent actionEvent) throws IOException {
         FileUtils.loadScreen("/flightsfx/chartview/ChartView.fxml",
                 (Stage) ((Node) actionEvent.getSource())
                         .getScene().getWindow());
+    }
+
+    /**
+     * Empties flight number, destination, departure and duration fields.
+     */
+    public void emptyFields()
+    {
+        flightNumberTxt.setText("");
+        departureTxt.setText("");
+        destinationTxt.setText("");
+        durationTxt.setText("");
     }
 }

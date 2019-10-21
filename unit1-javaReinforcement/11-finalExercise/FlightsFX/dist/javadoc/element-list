@@ -1,0 +1,5 @@
+module:FlightsFX
+flightsfx
+flightsfx.chartview
+flightsfx.model
+flightsfx.utils
