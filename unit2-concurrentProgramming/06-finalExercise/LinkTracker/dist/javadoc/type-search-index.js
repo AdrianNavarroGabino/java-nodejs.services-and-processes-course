@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"linktracker.utils","l":"FileUtils"},{"p":"linktracker","l":"FXMLMainViewController"},{"p":"linktracker.utils","l":"LinkReader"},{"p":"linktracker","l":"LinkTracker"},{"p":"linktracker.utils","l":"MessageUtils"},{"p":"linktracker.model","l":"WebPage"}]

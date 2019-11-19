@@ -1,29 +1,34 @@
+// Adrián Navarro Gabino
+
 package linktracker;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import linktracker.model.WebPage;
-import linktracker.utils.FileUtils;
-import linktracker.utils.LinkReader;
-import linktracker.utils.MessageUtils;
-
+import linktracker.utils.*;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
+/**
+ * <h1>Main View Controller</h1>
+ * Manages the main view.
+ * @author Adrian Navarro Gabino
+ * @version 1.0
+ */
 public class FXMLMainViewController {
     @FXML
     private Label totalPagesLbl;
@@ -34,52 +39,56 @@ public class FXMLMainViewController {
     @FXML
     private Label totalLinkLbl;
 
-    List<WebPage> webPages;
-    List<String> links;
-    List<Future> futures;
-    ThreadPoolExecutor executor;
-    Future<WebPage> future;
-    ScheduledService<Boolean> scheduledService;
-    AtomicInteger processedPages;
-    AtomicInteger totalLinks;
+    @FXML
+    private ListView<WebPage> webPagesList;
 
     @FXML
-    void initialize()
+    private ListView<String> linksList;
+
+    private List<WebPage> webPages;
+    private List<String> links;
+    private List<Future> futures;
+    private ThreadPoolExecutor executor;
+    private Future<WebPage> future;
+    private ScheduledService<Boolean> scheduledService;
+    private AtomicInteger processedPages;
+    private AtomicInteger totalLinks;
+
+    @FXML
+    private void initialize()
     {
-        processedPages = new AtomicInteger(0);
-        totalLinks = new AtomicInteger(0);
         webPages = new ArrayList<>();
         links = new ArrayList<>();
         futures = new ArrayList<>();
     }
 
-    public Callable<WebPage> getLinks(WebPage webPage) {
-        return () -> {
-            links.addAll(LinkReader.getLinks(webPage.getUrl()));
-            processedPages.incrementAndGet();
-            totalLinks.incrementAndGet();
-            return webPage;
-        };
-    }
-
     @FXML
-    void loadFile(ActionEvent event) {
+    private void loadFile(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.setInitialDirectory(new File("."));
         File file = fileChooser.showOpenDialog(null);
 
         if (file != null) {
-            webPages = FileUtils.loadPages(Path.of(file.getPath()));
-            MessageUtils.showMessage(
-                    "File loaded",
-                    webPages.size() + " pages found");
-            totalPagesLbl.setText(String.valueOf(webPages.size()));
+            try {
+                webPages = FileUtils.loadPages(Path.of(file.getPath()));
+                MessageUtils.showMessage(
+                        "File loaded",
+                        webPages.size() + " pages found");
+                totalPagesLbl.setText(String.valueOf(webPages.size()));
+            }
+            catch(Exception e)
+            {
+                MessageUtils.showError("Read error",
+                        "A read error has occurred");
+            }
         }
     }
 
     @FXML
-    void start(ActionEvent event) {
+    private void start(ActionEvent event) {
+        clearAux();
+
         if(webPages.size() == 0)
         {
             MessageUtils.showError(
@@ -116,18 +125,68 @@ public class FXMLMainViewController {
                         String.valueOf(processedPages.get()));
                 totalLinkLbl.setText(
                         String.valueOf(totalLinks.get()));
+                if(scheduledService.getValue())
+                {
+                    FillWebPagesList();
+                    scheduledService.cancel();
+                }
             });
             scheduledService.start();
         }
     }
 
     @FXML
-    void clear(ActionEvent event) {
-
+    private void ShowLinks(MouseEvent event) {
+        WebPage wp = webPagesList.getSelectionModel().getSelectedItem();
+        ObservableList<String> links = FXCollections.observableArrayList (
+                wp.getLinks());
+        linksList.setItems(links);
     }
 
     @FXML
-    void exit(ActionEvent event) {
+    private void clear(ActionEvent event) {
+        totalLinkLbl.setText("0");
+        totalPagesLbl.setText("0");
+        processedLbl.setText("0");
+        webPages = new ArrayList<>();
+        clearAux();
+    }
 
+    @FXML
+    private void exit(ActionEvent event) {
+        Platform.exit();
+    }
+
+    /**
+     * Receives the WebPage object to process and returns it again when the
+     * urls have been loaded.
+     * @param webPage Web page object
+     * @return Web page object
+     */
+    public Callable<WebPage> getLinks(WebPage webPage) {
+        return () -> {
+            List<String> linksAux = LinkReader.getLinks(webPage.getUrl());
+            links.addAll(linksAux);
+            webPage.setLinks(linksAux);
+            processedPages.incrementAndGet();
+            totalLinks.set(links.size());
+            return webPage;
+        };
+    }
+
+    private void FillWebPagesList()
+    {
+        ObservableList<WebPage> pages = FXCollections.observableArrayList (
+                webPages);
+        webPagesList.setItems(pages);
+    }
+
+    private void clearAux()
+    {
+        processedPages = new AtomicInteger(0);
+        totalLinks = new AtomicInteger(0);
+        links = new ArrayList<>();
+        webPagesList.setItems(null);
+        linksList.setItems(null);
     }
 }

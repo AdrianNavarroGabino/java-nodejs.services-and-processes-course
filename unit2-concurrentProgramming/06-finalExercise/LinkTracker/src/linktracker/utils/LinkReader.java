@@ -1,3 +1,5 @@
+// Adrián Navarro Gabino
+
 package linktracker.utils;
 
 import java.io.BufferedReader;
@@ -10,6 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
+/**
+ * <h1>LinkReader</h1>
+ * Manage the reading of the urls of the web pages.
+ * @author Adrian Navarro Gabino
+ * @version 1.0
+ */
 public class LinkReader extends BufferedReader {
     
     private LinkReader(Reader reader) {
@@ -36,7 +44,13 @@ public class LinkReader extends BufferedReader {
         
         return strJoin.length() == 0?null:strJoin.toString();
     }
-    
+
+    /**
+     * Internal class that reads the lines of an html and sends them to a
+     * function that looks for urls.
+     * @return Url in a html line
+     * @throws IOException Input/Output Exception
+     */
     @Override
     public String readLine() throws IOException {
         String line;
@@ -58,8 +72,14 @@ public class LinkReader extends BufferedReader {
         }
         
         return null; // Probably binary content
-    }  
+    }
 
+    /**
+     * Main function of the LinkReader class that processes a web page to get
+     * the urls.
+     * @param urlToParse Web page url
+     * @return A links list from the web page
+     */
     public static List<String> getLinks (String urlToParse) {
 
         LinkReader bufInput = null;
