@@ -1,3 +1,5 @@
+// Adrián Navarro Gabino
+
 const lodash = require('lodash');
 
 let names = lodash.join(["Arturo", "Nacho", "Fernando"], ',');
