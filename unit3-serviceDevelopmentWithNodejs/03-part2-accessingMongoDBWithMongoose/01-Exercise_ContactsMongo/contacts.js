@@ -82,7 +82,7 @@ else if(process.argv[2] == 'l')
 }
 else if(process.argv[2] == 'u')
 {
-    Contact.findOneAndUpdate({name: "Emilio"}, {$set: {age: 10}},
+    Contact.findOneAndUpdate({name: "Emilio"}, {$set: {age: 20}},
         {new: true}).then(c => console.log(c));
 }
 else if(process.argv[2] == 'd')
