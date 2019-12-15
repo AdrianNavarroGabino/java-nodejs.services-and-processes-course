@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Register Form</title>
+    <meta name="author" content="Adrián Navarro Gabino">
+    <script>
+        function onSubmitForm()
+        {
+            document.modifyForm.action = "/contacts/" +
+                document.getElementById("id").value + "?_method=PUT";
+
+            return true;
+        }
+
+        function onSubmitForm2()
+        {
+            document.deleteForm.action = "/contacts/" +
+                document.getElementById("id2").value + "?_method=DELETE";
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <form name="registerForm" type="submit" method="post" action="/contacts"
+    enctype="application/x-www-form-urlencoded">
+        <fieldset>			
+            <legend>Register</legend>
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name">
+            <br>
+            <label for="telephone">Telephone:</label>
+            <input type="number" name="telephone" id="telephone">
+            <br>
+            <label for="age">Age:</label>
+            <input type="number" name="age" id="age">
+            <br>
+        </fieldset>			
+        <input type="submit" value="Register" name="registerForm">
+    </form>
+
+    <form name="modifyForm" type="submit" method="POST"
+    onsubmit="return onSubmitForm();">
+        <fieldset>	
+            <input type="hidden" name="_method" value="PUT">
+            <legend>Modify</legend>
+            <label for="id">Id to modify:</label>
+            <input type="text" name="id" id="id">
+            <br>
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name2">
+            <br>
+            <label for="telephone">Telephone:</label>
+            <input type="number" name="telephone" id="telephone2">
+            <br>
+            <label for="age">Age:</label>
+            <input type="number" name="age" id="age2">
+            <br>
+        </fieldset>			
+        <input type="submit" value="Modify" name="modifyForm">
+    </form>
+
+    <form name="deleteForm" type="submit" method="POST"
+    onsubmit="return onSubmitForm2();">
+        <fieldset>	
+            <input type="hidden" name="_method" value="DELETE">
+            <legend>DELETE</legend>
+            <label for="id">Id to modify:</label>
+            <input type="text" name="id" id="id2">
+            <br>
+        </fieldset>			
+        <input type="submit" value="Delete" name="deleteForm">
+    </form>
+</body>
+</html>
