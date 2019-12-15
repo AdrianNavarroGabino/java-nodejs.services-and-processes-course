@@ -1,0 +1,81 @@
+{
+	"info": {
+		"_postman_id": "c1ab64d0-8ab1-42d0-9758-837adf5f8a6e",
+		"name": "Contacts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET all contacts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/contacts",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET contact by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/contacts/5dee9db2bd77532c74ccaaf7",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contacts",
+						"5dee9db2bd77532c74ccaaf7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST new contact",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Nacho Postman\", \"telephone\":\"123456789\", \"age\":\"25\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/contacts",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
