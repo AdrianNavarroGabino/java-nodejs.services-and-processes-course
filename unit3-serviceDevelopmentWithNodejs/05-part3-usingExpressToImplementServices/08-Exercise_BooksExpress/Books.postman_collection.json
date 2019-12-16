@@ -1,0 +1,187 @@
+{
+	"info": {
+		"_postman_id": "72f05434-8706-4c5c-9f0b-c418bc457109",
+		"name": "Books",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET all books",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/books",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET book by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/books/5df0b65113ae6a2e04447d50",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"books",
+						"5df0b65113ae6a2e04447d50"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST new book",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"title\":\"Test book\", \"authorId\":\"5df142aab2ad5a2bd83c4e5e\", \"price\":\"20\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/books",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT book",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"title\":\"Changed book\", \"authorId\":\"5df142aab2ad5a2bd83c4e5e\", \"price\":\"20\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/books/5df7cc2a155c0b34ec4a5b38",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"books",
+						"5df7cc2a155c0b34ec4a5b38"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE book",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/books/5df7cc2a155c0b34ec4a5b38",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"books",
+						"5df7cc2a155c0b34ec4a5b38"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET all authors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/authors",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST new author",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"firstName\":\"Postman author\", \"lastName\":\"Test\", \"yearOfBirth\":\"1987\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/authors",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authors"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

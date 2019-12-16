@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Books</title>
+    <meta name="author" content="Adrián Navarro Gabino">
+    <script>
+        function onSubmitForm()
+        {
+            document.modifyForm.action = "/books/" +
+                document.getElementById("id").value + "?_method=PUT";
+
+            return true;
+        }
+
+        function onSubmitForm2()
+        {
+            document.deleteForm.action = "/books/" +
+                document.getElementById("id2").value + "?_method=DELETE";
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <form name="registerBookForm" type="submit" method="post" action="/books"
+    enctype="application/x-www-form-urlencoded">
+        <fieldset>			
+            <legend>Register book</legend>
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title">
+            <br>
+            <label for="authorId">Author id:</label>
+            <input type="text" name="authorId" id="authorId">
+            <br>
+            <label for="price">Price:</label>
+            <input type="number" name="price" id="price">
+            <br>
+        </fieldset>			
+        <input type="submit" value="Register book" name="registerBookForm">
+    </form>
+
+    <form name="registerAuthorForm" type="submit" method="post" action="/authors"
+    enctype="application/x-www-form-urlencoded">
+        <fieldset>			
+            <legend>Register author</legend>
+            <label for="firstName">First name:</label>
+            <input type="text" name="firstName" id="firstName">
+            <br>
+            <label for="lastName">Last name:</label>
+            <input type="text" name="lastName" id="lastName">
+            <br>
+            <label for="yearOfBirth">Year of birth:</label>
+            <input type="number" name="yearOfBirth" id="yearOfBirth">
+            <br>
+        </fieldset>			
+        <input type="submit" value="Register author" name="registerAuthorForm">
+    </form>
+
+    <form name="modifyForm" type="submit" method="POST"
+    onsubmit="return onSubmitForm();">
+        <fieldset>	
+            <input type="hidden" name="_method" value="PUT">
+            <legend>Modify</legend>
+            <label for="id">Id to modify:</label>
+            <input type="text" name="id" id="id">
+            <br>
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title">
+            <br>
+            <label for="authorId">Author id:</label>
+            <input type="text" name="authorId" id="authorId">
+            <br>
+            <label for="price">Price:</label>
+            <input type="number" name="price" id="price">
+            <br>
+        </fieldset>			
+        <input type="submit" value="Modify" name="modifyForm">
+    </form>
+
+    <form name="deleteForm" type="submit" method="POST"
+    onsubmit="return onSubmitForm2();">
+        <fieldset>	
+            <input type="hidden" name="_method" value="DELETE">
+            <legend>DELETE</legend>
+            <label for="id">Id to delete:</label>
+            <input type="text" name="id" id="id2">
+            <br>
+        </fieldset>			
+        <input type="submit" value="Delete" name="deleteForm">
+    </form>
+</body>
+</html>
