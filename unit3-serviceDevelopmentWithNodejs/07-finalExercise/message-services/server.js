@@ -7,6 +7,7 @@ const methodOverride = require('method-override');
 const sha256 = require('sha256');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
 const secretWord = "DAMsecret";
 
@@ -21,7 +22,7 @@ let userSchema = new mongoose.Schema(
             minlength: 1,
             trim: true,
             unique: true,
-            match: new RegExp("^[a-zA-Z0-9]+$")
+            match: /^[a-zA-Z0-9]+$/
         },
         password: {
             type: String,
@@ -60,10 +61,8 @@ let messageSchema = new mongoose.Schema(
             required: false
         },
         sent: {
-            type: String,
-            required: true,
-            trim: true,
-            minlength: 10
+            type: Date,
+            required: true
         }
     }
 );
@@ -82,6 +81,8 @@ let validateToken = token => {
     } catch (e) {}
 }
 
+let user = null;
+
 let app = express();
 app.use(bodyParser.urlencoded({
     extended: true
@@ -96,9 +97,14 @@ app.post('/login', (req, res) => {
     User.findOne({name: name, password: pass}).then(data => {
         if(data != null)
         {
-            const user = data;
+            user = data;
             let token = generateToken(name);
-            let result = {ok: true, token: token, name: name, image: data.image};
+            let result = {
+                ok: true,
+                token: token,
+                name: name,
+                image: data.image
+            };
             res.send(result);
         }
         else
@@ -107,7 +113,8 @@ app.post('/login', (req, res) => {
             res.send(result);
         }
     }).catch(error => {
-        let result = {ok: false, error: "Error trying to validate user: " + error};
+        let result = {ok: false, error: "Error trying to validate user: " +
+            error};
         res.send(result);
     });
 });
@@ -132,7 +139,8 @@ app.post('/register', (req, res) => {
             res.send(result);
         })
         .catch(error =>{
-            let result = {ok: false, error: "User couldn't be registered: " + error};
+            let result = {ok: false, error: "User couldn't be registered: " +
+                error};
             res.send(result);
         });
 });
@@ -143,19 +151,19 @@ app.get('/users', (req, res) => {
 
     if(token)
     {
-        //token = token.substring(7);
         if (validateToken(token)) {
 
             newToken = generateToken(token);
             error = false;
 
-            User.find().then(result => {
+            User.find().then(r => {
+                let result = {ok: true, users: r};
                 res.send(result);
             })
         }
         else
         {
-            let result = {error: true, errorMessage: "Error validating user"};
+            let result = {ok: false, error: "Error validating user"};
             res.send(result);
         }
     }
@@ -172,25 +180,60 @@ app.put('/users', (req, res) => {
 
     if(token)
     {
-        token = token.substring(7);
         if (validateToken(token)) {
 
             newToken = generateToken(token);
             error = false;
 
-            User.findById(user._id).then(user => {
-                user.save().then(user => {
-                    const filePath = `img/${Date.now()}.jpg`;
-                    fs.writeFileSync(filePath, Buffer.from(request.body.image, 'base64'));
-                    user.image = req.body.image;
+            User.findById(user._id).then(u => {
+                const filePath = `img/${Date.now()}.jpg`;
+                fs.writeFileSync(filePath,
+                    Buffer.from(req.body.image, 'base64'));
+                u.image = req.body.image;
+                
+                u.save().then(u => {
                     let result = {ok: true};
                     res.send(result);
                 }).catch(error => {
-                    let result = {ok: false, error: "Error updating user: " + user._id};
+                    let result = {ok: false, error: "Error updating user: " +
+                        user._id};
                     res.send(result);
                 });
             }).catch(error => {
                 let result = {ok: false, error: "User not found"};
+                res.send(result);
+            });
+        }
+        else
+        {
+            let result = {ok: false, error: "Error validating user"};
+            res.send(result);
+        }
+    }
+
+    if(error)
+    {
+        res.sendStatus(401);
+    }
+});
+
+app.get('/messages', (req, res) => {
+    let token = req.headers['authorization'];
+    let error = true;
+
+    if(token)
+    {
+        if (validateToken(token)) {
+
+            newToken = generateToken(token);
+            error = false;
+
+            Message.find({to: user._id}).populate('from').then(m => {
+                let result = {ok: true, messages: m};
+                res.send(result);
+            }).catch(error => {
+                let result = {ok: false, error: "Error getting messages for " +
+                    "user: " + user._id};
                 res.send(result);
             });
         }
@@ -205,6 +248,61 @@ app.put('/users', (req, res) => {
     {
         res.sendStatus(401);
     }
+});
+
+app.post('/messages/:toUserId', (req, res) => {
+    let token = req.headers['authorization'];
+    let error = true;
+
+    if(token)
+    {
+        if (validateToken(token)) {
+
+            newToken = generateToken(token);
+            error = false;
+
+            let m = new
+                Message({
+                    from: user._id,
+                    to: req.params.toUserId,
+                    message: req.body.message,
+                    image: req.body.image,
+                    sent: new moment(req.body.sent, "DD/MM/YYYY")
+                });
+
+            m.save()
+                .then(r =>{
+                    let result = {ok: true, message: m};
+                    res.send(result);
+            })
+            .catch(error =>{
+                let result = {ok: false, error: "Error sending a message to: " +
+                    req.params.toUserId + " " + error};
+                res.send(result);
+            });
+        }
+        else
+        {
+            let result = {error: true, errorMessage: "Error validating user"};
+            res.send(result);
+        }
+    }
+
+    if(error)
+    {
+        res.sendStatus(401);
+    }
+});
+
+app.delete('/messages/:id', (req, res) => {
+    Message.findByIdAndRemove(req.params.id).then(result => {
+        let data = {ok: true};
+        res.send(data);
+    }).catch(error => {
+        let data = {ok: false,
+            error:"Error deleting message: " + req.params.id};
+        res.send(data);
+    });
 });
 
 app.listen(8080);
