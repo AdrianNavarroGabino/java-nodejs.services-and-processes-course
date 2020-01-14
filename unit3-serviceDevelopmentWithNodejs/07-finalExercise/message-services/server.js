@@ -70,7 +70,7 @@ let messageSchema = new mongoose.Schema(
 let Message = mongoose.model('message', messageSchema);
 
 let generateToken = name => {
-    let token = jwt.sign({name: name}, secretWord, {expiresIn:"30 minutes"});
+    let token = jwt.sign({name: name}, secretWord, {expiresIn:"30 days"});
     return token;
 }
 
@@ -130,7 +130,7 @@ app.post('/register', (req, res) => {
     let user1 = new User({
         name: name,
         password: sha256(pass),
-        image: image
+        image: filePath
     });
 
     user1.save()
@@ -139,8 +139,7 @@ app.post('/register', (req, res) => {
             res.send(result);
         })
         .catch(error =>{
-            let result = {ok: false, error: "User couldn't be registered: " +
-                error};
+            let result = {ok: false, error: "User couldn't be registered"};
             res.send(result);
         });
 });
@@ -189,7 +188,7 @@ app.put('/users', (req, res) => {
                 const filePath = `img/${Date.now()}.jpg`;
                 fs.writeFileSync(filePath,
                     Buffer.from(req.body.image, 'base64'));
-                u.image = req.body.image;
+                u.image = filePath;
                 
                 u.save().then(u => {
                     let result = {ok: true};
@@ -239,7 +238,7 @@ app.get('/messages', (req, res) => {
         }
         else
         {
-            let result = {error: true, errorMessage: "Error validating user"};
+            let result = {ok: false, errorMessage: "Error validating user"};
             res.send(result);
         }
     }
@@ -277,13 +276,13 @@ app.post('/messages/:toUserId', (req, res) => {
             })
             .catch(error =>{
                 let result = {ok: false, error: "Error sending a message to: " +
-                    req.params.toUserId + " " + error};
+                    req.params.toUserId};
                 res.send(result);
             });
         }
         else
         {
-            let result = {error: true, errorMessage: "Error validating user"};
+            let result = {ok: false, error: "Error validating user"};
             res.send(result);
         }
     }
