@@ -81,8 +81,6 @@ let validateToken = token => {
     } catch (e) {}
 }
 
-let user = null;
-
 let app = express();
 app.use(bodyParser.urlencoded({
     extended: true
@@ -97,8 +95,7 @@ app.post('/login', (req, res) => {
     User.findOne({name: name, password: pass}).then(data => {
         if(data != null)
         {
-            user = data;
-            let token = generateToken(name);
+            let token = generateToken(data._id);
             let result = {
                 ok: true,
                 token: token,
@@ -125,7 +122,7 @@ app.post('/register', (req, res) => {
     let image = req.body.image;
     
     const filePath = `img/${Date.now()}.jpg`;
-    fs.writeFileSync(filePath, Buffer.from(req.body.image, 'base64'));
+    fs.writeFileSync(filePath, Buffer.from(image, 'base64'));
 
     let user1 = new User({
         name: name,
@@ -179,12 +176,13 @@ app.put('/users', (req, res) => {
 
     if(token)
     {
-        if (validateToken(token)) {
+        let validatedToken = validateToken(token);
+        if (validatedToken) {
 
             newToken = generateToken(token);
             error = false;
 
-            User.findById(user._id).then(u => {
+            User.findById(validatedToken._id).then(u => {
                 const filePath = `img/${Date.now()}.jpg`;
                 fs.writeFileSync(filePath,
                     Buffer.from(req.body.image, 'base64'));
@@ -195,7 +193,7 @@ app.put('/users', (req, res) => {
                     res.send(result);
                 }).catch(error => {
                     let result = {ok: false, error: "Error updating user: " +
-                        user._id};
+                        validatedToken._id};
                     res.send(result);
                 });
             }).catch(error => {
@@ -222,17 +220,18 @@ app.get('/messages', (req, res) => {
 
     if(token)
     {
-        if (validateToken(token)) {
+        let validatedToken = validateToken(token);
+        if (validatedToken) {
 
             newToken = generateToken(token);
             error = false;
 
-            Message.find({to: user._id}).populate('from').then(m => {
+            Message.find({to: validatedToken._id}).populate('from').then(m => {
                 let result = {ok: true, messages: m};
                 res.send(result);
             }).catch(error => {
                 let result = {ok: false, error: "Error getting messages for " +
-                    "user: " + user._id};
+                    "user: " + validatedToken._id};
                 res.send(result);
             });
         }
@@ -255,14 +254,15 @@ app.post('/messages/:toUserId', (req, res) => {
 
     if(token)
     {
-        if (validateToken(token)) {
+        let validatedToken = validateToken(token);
+        if (validatedToken) {
 
             newToken = generateToken(token);
             error = false;
 
             let m = new
                 Message({
-                    from: user._id,
+                    from: validatedToken._id,
                     to: req.params.toUserId,
                     message: req.body.message,
                     image: req.body.image,
