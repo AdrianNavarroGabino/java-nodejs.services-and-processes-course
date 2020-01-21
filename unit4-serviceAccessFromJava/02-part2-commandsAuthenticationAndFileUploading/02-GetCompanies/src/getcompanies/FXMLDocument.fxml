@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="372.0" prefWidth="626.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="getcompanies.FXMLDocumentController">
+   <children>
+      <Label layoutX="279.0" layoutY="14.0" text="Companies" />
+      <Label layoutX="23.0" layoutY="205.0" text="Employees" />
+      <ListView fx:id="listCompanies" layoutX="20.0" layoutY="42.0" prefHeight="150.0" prefWidth="584.0" />
+      <ListView fx:id="listEmployees" layoutX="23.0" layoutY="233.0" prefHeight="122.0" prefWidth="584.0" />
+      <Button fx:id="addBtn" layoutX="102.0" layoutY="201.0" mnemonicParsing="false" onAction="#addEmployee" text="Add" />
+   </children>
+</AnchorPane>
