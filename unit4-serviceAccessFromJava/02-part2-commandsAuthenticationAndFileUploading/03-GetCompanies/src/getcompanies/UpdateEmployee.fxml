@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="250.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="getcompanies.UpdateEmployeeController">
+   <children>
+      <Label layoutX="32.0" layoutY="46.0" text="NIF:" />
+      <Label layoutX="32.0" layoutY="95.0" text="Name:" />
+      <Label layoutX="32.0" layoutY="138.0" text="Age:" />
+      <TextField fx:id="nifBox" layoutX="116.0" layoutY="42.0" prefHeight="26.0" prefWidth="126.0" />
+      <TextField fx:id="nameBox" layoutX="116.0" layoutY="91.0" prefHeight="26.0" prefWidth="169.0" />
+      <TextField fx:id="ageBox" layoutX="116.0" layoutY="134.0" prefHeight="26.0" prefWidth="51.0" />
+      <Button fx:id="okBtn" layoutX="53.0" layoutY="196.0" mnemonicParsing="false" onAction="#update" text="Ok" />
+      <Button fx:id="cancelBtn" layoutX="190.0" layoutY="196.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" textFill="#fd0000" />
+      <Label fx:id="statusLbl" layoutX="52.0" layoutY="186.0" prefHeight="18.0" prefWidth="229.0" textFill="RED" />
+   </children>
+</AnchorPane>
