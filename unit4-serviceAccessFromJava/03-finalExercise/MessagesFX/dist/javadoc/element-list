@@ -1,0 +1,6 @@
+module:MessagesFX
+messagesfx
+messagesfx.models
+messagesfx.models.responses
+messagesfx.services
+messagesfx.utils

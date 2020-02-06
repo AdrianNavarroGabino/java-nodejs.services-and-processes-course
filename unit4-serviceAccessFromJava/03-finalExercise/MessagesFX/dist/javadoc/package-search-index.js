@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"m":"MessagesFX","l":"messagesfx"},{"m":"MessagesFX","l":"messagesfx.models"},{"m":"MessagesFX","l":"messagesfx.models.responses"},{"m":"MessagesFX","l":"messagesfx.services"},{"m":"MessagesFX","l":"messagesfx.utils"}]
