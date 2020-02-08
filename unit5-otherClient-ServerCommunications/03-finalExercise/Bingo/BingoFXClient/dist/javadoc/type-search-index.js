@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"bingofxclient","l":"BingoClientController"},{"p":"bingofxclient","l":"BingoFXClient"},{"p":"bingofxclient","l":"ClientThread"},{"p":"bingofxclient.utils","l":"MessageUtils"}]
